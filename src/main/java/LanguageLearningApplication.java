@@ -4,6 +4,12 @@ import static spark.Spark.*;
 
 public class LanguageLearningApplication {
 
+    /**
+     * TODO build a standard response that is returned on every call
+     * TODO set response.type("application/json")
+     * @param args
+     */
+
     public static void main(String[] args) {
 
         CardService service = new CardService();
