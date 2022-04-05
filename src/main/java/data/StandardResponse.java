@@ -1,13 +1,12 @@
 package data;
 
 import com.google.gson.JsonElement;
-import data.Status;
 
 public class StandardResponse {
 
     private Status status;
     private String message;
-    private JsonElement jsonElement;
+    private JsonElement element;
 
     // for stuff that just needs to see everything's fine
     public StandardResponse(Status status) {
@@ -23,14 +22,14 @@ public class StandardResponse {
     // for stuff that needs response
     public StandardResponse(Status status, JsonElement jsonElement) {
         this.status = status;
-        this.jsonElement = jsonElement;
+        this.element = jsonElement;
     }
 
     // everything else
     public StandardResponse(Status status, String message, JsonElement jsonElement) {
         this.status = status;
         this.message = message;
-        this.jsonElement = jsonElement;
+        this.element = jsonElement;
     }
 
     public Status getStatus() {
@@ -49,11 +48,11 @@ public class StandardResponse {
         this.message = message;
     }
 
-    public JsonElement getJsonElement() {
-        return jsonElement;
+    public JsonElement getElement() {
+        return element;
     }
 
-    public void setJsonElement(JsonElement jsonElement) {
-        this.jsonElement = jsonElement;
+    public void setElement(JsonElement element) {
+        this.element = element;
     }
 }

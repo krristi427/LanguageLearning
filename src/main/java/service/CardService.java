@@ -25,7 +25,10 @@ public class CardService {
     private final Logger log = LoggerFactory.getLogger(CardService.class);
 
     public String getAll() {
-        return gson.toJson(new StandardResponse(Status.SUCCESS, gson.toJsonTree(cards)));
+
+        // type needs to be provided when working with generic types such as List
+        return gson.toJson(new StandardResponse(
+                Status.SUCCESS, gson.toJsonTree(cards, new TypeToken<ArrayList<Card>>() {}.getType())));
     }
 
     public String getCards(String searchQuery) {
@@ -39,7 +42,8 @@ public class CardService {
                     Status.ERROR, "Failed to find card: " + searchQuery, gson.toJsonTree(Collections.EMPTY_LIST)));
         }
 
-        return gson.toJson(new StandardResponse(Status.SUCCESS, gson.toJsonTree(foundCards)));
+        return gson.toJson(new StandardResponse(
+                Status.SUCCESS, gson.toJsonTree(foundCards, new TypeToken<ArrayList<Card>>() {}.getType())));
     }
 
     public String postCard(String toPost) {
