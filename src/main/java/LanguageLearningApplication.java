@@ -4,24 +4,33 @@ import static spark.Spark.*;
 
 public class LanguageLearningApplication {
 
-    /**
-     * TODO build a standard response that is returned on every call
-     * TODO set response.type("application/json")
-     * @param args
-     */
-
     public static void main(String[] args) {
 
         CardService service = new CardService();
 
-        get("/", (request, response) -> service.getAll());
-        get("/cards/:id", (request, response) -> service.getCards(request.params(":id")));
+        get("/", (request, response) -> {
+            response.type("application/json");
+            return service.getAll();
+        });
 
-        post("/cards", (request, response) -> service.postCard(request.body()));
+        get("/cards/:id", (request, response) -> {
+            response.type("application/json");
+            return service.getCards(request.params(":id"));
+        });
 
-        delete("/card/:id", (request, response) -> service.delete(request.params(":id")));
+        post("/cards", (request, response) -> {
+            response.type("application/json");
+            return service.postCard(request.body());
+        });
 
-        put("/card/:id/:toUpdate", (request, response) ->
-                service.updateBack(request.params(":id"), request.params(":toUpdate")));
+        delete("/cards/:id", (request, response) -> {
+            response.type("application/json");
+            return service.delete(request.params(":id"));
+        });
+
+        put("/cards/:id/:toUpdate", (request, response) -> {
+            response.type("application/json");
+            return service.updateBack(request.params(":id"), request.params(":toUpdate"));
+        });
     }
 }
