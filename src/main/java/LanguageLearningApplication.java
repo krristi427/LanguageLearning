@@ -1,3 +1,4 @@
+import service.CardDatabaseService;
 import service.CardService;
 
 import static spark.Spark.*;
@@ -6,7 +7,7 @@ public class LanguageLearningApplication {
 
     public static void main(String[] args) {
 
-        CardService service = new CardService();
+        CardService service = new CardService(new CardDatabaseService());
 
         get("/", (request, response) -> {
             response.type("application/json");

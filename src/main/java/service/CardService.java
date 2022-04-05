@@ -10,16 +10,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class CardService {
 
-    private List<Card> cards = new ArrayList<>(Arrays.asList(
-            new Card("hi", "bye"),
-            new Card("0", "1")
-    ));
+    CardDatabaseService service;
+
+    public CardService(CardDatabaseService databaseService) {
+        this.service = databaseService;
+    }
 
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final Logger log = LoggerFactory.getLogger(CardService.class);
@@ -28,12 +28,13 @@ public class CardService {
 
         // type needs to be provided when working with generic types such as List
         return gson.toJson(new StandardResponse(
-                Status.SUCCESS, gson.toJsonTree(cards, new TypeToken<ArrayList<Card>>() {}.getType())));
+                Status.SUCCESS, gson.toJsonTree(service.retrieveCards(), new TypeToken<ArrayList<Card>>() {}.getType())));
     }
 
     public String getCards(String searchQuery) {
 
-        List<Card> foundCards = cards.stream()
+        List<Card> foundCards = service.retrieveCards()
+                .stream()
                 .filter(card -> (card.getFront().equals(searchQuery) || card.getBack().equals(searchQuery)))
                 .toList();
 
@@ -51,7 +52,7 @@ public class CardService {
         Type type = new TypeToken<ArrayList<Card>>() {}.getType();
         List<Card> cardsToSave = gson.fromJson(toPost, type);
 
-        cards.addAll(cardsToSave);
+        service.retrieveCards().addAll(cardsToSave);
 
         return gson.toJson(new StandardResponse(Status.SUCCESS));
     }
@@ -60,10 +61,12 @@ public class CardService {
 
         StandardResponse response = new StandardResponse(Status.SUCCESS);
 
+        List<Card> cards = service.retrieveCards();
+
         cards.stream()
                 .filter(card -> (card.getFront().equals(toDelete) || card.getBack().equals(toDelete)))
                 .findFirst()
-                .ifPresentOrElse(card -> cards.remove(card), () -> {
+                .ifPresentOrElse(cards::remove, () -> {
                     log.error("Card not found");
                     response.setStatus(Status.ERROR);
                 });
@@ -79,6 +82,8 @@ public class CardService {
 
         StandardResponse response = new StandardResponse(Status.SUCCESS);
 
+        List<Card> cards = service.retrieveCards();
+
         cards.stream()
                 .filter(card -> card.getFront().equals(id))
                 .findFirst()
@@ -92,15 +97,5 @@ public class CardService {
         }
 
         return gson.toJson(response);
-    }
-
-    public Boolean updateFront(String id, String correction) {
-
-        cards.stream()
-                .filter(card -> card.getBack().equals(id))
-                .findFirst()
-                .ifPresentOrElse(card -> card.setFront(correction), () -> log.error("Card not found"));
-
-        return true;
     }
 }
