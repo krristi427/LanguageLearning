@@ -16,4 +16,12 @@ public class CardDatabaseService {
     public List<Card> retrieveCards() {
         return cards;
     }
+
+    public boolean addCards(List<Card> toAdd) {
+        return cards.addAll(toAdd);
+    }
+
+    public boolean removeCard(Card card) {
+        return cards.remove(card);
+    }
 }

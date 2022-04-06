@@ -23,6 +23,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,7 +48,15 @@ public class CardServiceTest {
     void setup() {
 
         // define what happens when the DB is called
-        when(databaseService.retrieveCards()).thenReturn(expectedCards);
+        lenient().when(databaseService.retrieveCards()).thenReturn(expectedCards);
+        lenient().when(databaseService.addCards(anyList())).then(invocation -> {
+            List<Card> toAdd = invocation.getArgument(0);
+            return expectedCards.addAll(toAdd);
+        });
+        lenient().when(databaseService.removeCard(any(Card.class))).then(invocation -> {
+            Card toRemove = invocation.getArgument(0);
+            return expectedCards.remove(toRemove);
+        });
     }
 
     @Test
@@ -86,5 +97,60 @@ public class CardServiceTest {
         Assertions.assertEquals(expected, found);
     }
 
+    @Test
+    public void testPostSuccess() {
 
+        List<Card> newCards = new ArrayList<>(List.of(
+                new Card("cat", "katze"),
+                new Card("dog", "hund")
+        ));
+        String expected = gson.toJson(new StandardResponse(
+                Status.SUCCESS, gson.toJsonTree(newCards, new TypeToken<ArrayList<Card>>() {}.getType())));
+
+        String toPost = "[\n" +
+                "    {\n" +
+                "        \"front\": \"cat\",\n" +
+                "        \"back\": \"katze\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "        \"front\": \"dog\",\n" +
+                "        \"back\": \"hund\"\n" +
+                "    }\n" +
+                "]";
+
+        String received = cardService.postCard(toPost);
+        Assertions.assertEquals(expected, received);
+    }
+
+    @Test
+    public void testPostFailure() {
+
+        String expected = gson.toJson(new StandardResponse(Status.ERROR, gson.toJsonTree(Collections.EMPTY_LIST)));
+
+        String toPost = "[\n";
+
+        String received = cardService.postCard(toPost);
+        Assertions.assertEquals(expected, received);
+    }
+
+    @Test
+    public void testDeleteSuccess() {
+
+        String expected = gson.toJson(new StandardResponse(Status.SUCCESS));
+        String received = cardService.delete("hi");
+        Assertions.assertEquals(expected, received);
+    }
+
+    @Test
+    public void testDeleteFailure() {
+
+        String toDelete = "fuck off";
+
+        StandardResponse response = new StandardResponse(Status.ERROR);
+        response.setMessage("Failed to find card: " + toDelete);
+
+        String expected = gson.toJson(response);
+        String received = cardService.delete("fuck off");
+        Assertions.assertEquals(expected, received);
+    }
 }

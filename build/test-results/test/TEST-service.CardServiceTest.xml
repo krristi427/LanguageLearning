@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="service.CardServiceTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2022-04-05T19:07:25" hostname="LAPTOP-Kristi" time="0.369">
+<testsuite name="service.CardServiceTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2022-04-06T09:39:30" hostname="LAPTOP-Kristi" time="0.594">
   <properties/>
-  <testcase name="testGetCard_Found()" classname="service.CardServiceTest" time="0.319"/>
-  <testcase name="[1] null" classname="service.CardServiceTest" time="0.017"/>
-  <testcase name="[2] " classname="service.CardServiceTest" time="0.003"/>
+  <testcase name="testPostSuccess()" classname="service.CardServiceTest" time="0.502"/>
+  <testcase name="testGetCard_Found()" classname="service.CardServiceTest" time="0.006"/>
+  <testcase name="testPostFailure()" classname="service.CardServiceTest" time="0.008"/>
+  <testcase name="[1] null" classname="service.CardServiceTest" time="0.023"/>
+  <testcase name="[2] " classname="service.CardServiceTest" time="0.004"/>
   <testcase name="[3] &#9;" classname="service.CardServiceTest" time="0.003"/>
-  <testcase name="[4] &#10;" classname="service.CardServiceTest" time="0.002"/>
-  <testcase name="testGetAll()" classname="service.CardServiceTest" time="0.003"/>
-  <system-out><![CDATA[]]></system-out>
+  <testcase name="[4] &#10;" classname="service.CardServiceTest" time="0.004"/>
+  <testcase name="testDeleteSuccess()" classname="service.CardServiceTest" time="0.004"/>
+  <testcase name="testDeleteFailure()" classname="service.CardServiceTest" time="0.003"/>
+  <testcase name="testGetAll()" classname="service.CardServiceTest" time="0.004"/>
+  <system-out><![CDATA[11:39:30.863 [Test worker] ERROR service.CardService - Somewhat malformed JSON my friend don't you think
+11:39:30.937 [Test worker] ERROR service.CardService - Card not found
+]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

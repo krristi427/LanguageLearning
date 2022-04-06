@@ -2,6 +2,8 @@ package service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import data.Card;
 import data.StandardResponse;
@@ -50,11 +52,22 @@ public class CardService {
     public String postCard(String toPost) {
 
         Type type = new TypeToken<ArrayList<Card>>() {}.getType();
-        List<Card> cardsToSave = gson.fromJson(toPost, type);
 
-        service.retrieveCards().addAll(cardsToSave);
+        StandardResponse response = new StandardResponse(Status.SUCCESS);
 
-        return gson.toJson(new StandardResponse(Status.SUCCESS));
+        List<Card> cardsToSave = new ArrayList<>();
+
+        try {
+            cardsToSave = gson.fromJson(toPost, type);
+        } catch (JsonParseException exception) {
+            log.error("Somewhat malformed JSON my friend don't you think");
+            response.setStatus(Status.ERROR);
+        }
+
+        service.addCards(cardsToSave);
+
+        response.setElement(gson.toJsonTree(cardsToSave, new TypeToken<ArrayList<Card>>() {}.getType()));
+        return gson.toJson(response);
     }
 
     public String delete(String toDelete) {
@@ -66,7 +79,7 @@ public class CardService {
         cards.stream()
                 .filter(card -> (card.getFront().equals(toDelete) || card.getBack().equals(toDelete)))
                 .findFirst()
-                .ifPresentOrElse(cards::remove, () -> {
+                .ifPresentOrElse(card -> service.removeCard(card), () -> {
                     log.error("Card not found");
                     response.setStatus(Status.ERROR);
                 });
