@@ -1,0 +1,33 @@
+version: '3.8'
+stages:
+  - prepare
+  - test
+  - package
+  - build
+steps:
+  main_clone:
+    title: Cloning main repository...
+    stage: prepare
+    type: git-clone
+    repo: 'krristi427/LanguageLearning'
+    revision: master
+    git: github
+  MyUnitTests:
+    title: Compile/Unit test
+    stage: test
+    image: gradle:7.4.2-jdk17-alpine
+    commands:
+      - gradle test --no-daemon
+  BuildMyJar:
+    title: Packaging Jar file
+    stage: package
+    image: gradle:7.4.2-jdk17-alpine
+    commands:
+      - gradle clean build --no-daemon
+  MyAppDockerImage:
+    title: Building Docker Image
+    type: build
+    stage: build
+    image_name: language-learning
+    working_directory: ./
+    tag: 'non-multi-stage'
