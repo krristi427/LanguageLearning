@@ -8,6 +8,11 @@ import java.util.List;
 
 public class CardDatabaseService {
 
+    /**
+     * Sample Class to simulate Database communication
+     * As a DB isn't connected or configured, this fucking list acts like it
+     */
+
     private List<Card> cards = new ArrayList<>(Arrays.asList(
             new Card("hi", "bye"),
             new Card("0", "1")
